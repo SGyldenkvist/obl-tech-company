@@ -1,5 +1,8 @@
 -- Obligatorisk opgave: Tech Company
 
+
+-- SINGLE TABLE ASSIGNMENTS:
+
 -- Min test:
 SELECT * FROM employees;
 
@@ -63,4 +66,43 @@ SELECT department_number, COUNT(*) AS number_of_emplyees_dep FROM employees GROU
 
 -- AGGREGATE FUNCTIONS:
 
--- Opgave 1:
+-- Use MIN, MAX, AVG, SUM, ORDER BY, BETWEEN and more.
+
+-- Opgave 1: List the number of employees.
+SELECT COUNT(*) AS total_employees FROM employees;
+
+-- Opgave 2: List the sum of all salaries (excluding commission)
+SELECT SUM(salary) AS total_salaries FROM employees;
+
+-- Opgave 3: List the average salary for employees in department 20.
+SELECT AVG(salary) AS average_salary FROM employees WHERE department_number = 20;
+
+-- Opgave 4: List the unique job titles in the company.
+SELECT DISTINCT job_title FROM employees ORDER BY job_title;
+
+-- Opgave 5: List the number of employees in each department.
+SELECT Count(*) AS total_employees, department_number FROM employees GROUP BY department_number;
+
+-- Opgave 6: List in decreasing order the maximum salary in each department together with the department number.
+SELECT department_number, MAX(salary) AS max_salary FROM employees GROUP BY department_number ORDER BY max_salary DESC;
+
+-- Opgave 7: List total sum of salary and commission for all employees.
+SELECT SUM(salary + IFNULL(commission, 0)) AS total_salary_and_commission FROM employees;
+
+
+-- JOIN ASSIGMENTS:
+
+/* Opgave 1: Create an INNER JOIN between employees and departments to get the department name for each employee.
+ Show all columns. (De har department_number til fælles).*/
+
+SELECT * FROM employees
+    INNER JOIN departments
+        ON employees.department_number = departments.department_number;
+
+
+/* Opgave 2: Continue from the last task. Show two columns.
+   The employee_name and their corresponding department_name.
+   Oh, and can you sort them alphabetically (A-Z)?
+ */
+
+ SELECT employees.employee_name, departments.department_name FROM employees JOIN departments ON employees.department_number = departments.department_number ORDER BY employees.employee_name ASC;
