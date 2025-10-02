@@ -90,6 +90,7 @@ SELECT department_number, MAX(salary) AS max_salary FROM employees GROUP BY depa
 SELECT SUM(salary + IFNULL(commission, 0)) AS total_salary_and_commission FROM employees;
 
 
+
 -- JOIN ASSIGMENTS:
 
 /* Opgave 1: Create an INNER JOIN between employees and departments to get the department name for each employee.
@@ -196,3 +197,90 @@ HAVING COUNT(employees.department_number)>3;
  */
 
  SELECT employee_name, salary FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);
+
+
+
+-- JOIN TABLE (MANY-TO-MANY)
+
+
+
+-- Opgave 1: Create a new table called  leaders and insert rows into it.
+CREATE TABLE leaders(
+    leader_number INT PRIMARY KEY AUTO_INCREMENT,
+    leader_name VARCHAR(30)
+);
+
+INSERT INTO leaders (leader_name) VALUES ('Nielsen'), ('Hansen'), ('Jensen');
+
+
+SELECT * FROM leaders;
+
+
+/*
+ Opgave 2: Create a new table called employees_leaders that should link the employees and leaders tables.
+ This is called a join table.
+ It will enable you to create a many-to-many relationship between employees and leaders
+ (a leader can manage multiple employees and an employee can have multiple leaders).
+
+ (Jeg læste din spoiler)
+
+ Men jeg forstår nogenlunde...
+ employees_leaders tabellen er en join tabel, der forbinder leaders- og employees-tabllerne,
+ via Foreign keys.
+
+*/
+
+ CREATE TABLE employees_leaders(
+     employee_number INT,
+     leader_number INT,
+     PRIMARY KEY(employee_number, leader_number),
+     FOREIGN KEY (employee_number) REFERENCES employees(employee_number),
+     FOREIGN KEY(leader_number) REFERENCES leaders(leader_number)
+ );
+
+-- Opgave 3: Create rows in employees_leaders that link employees to their respective leaders.
+/*
+Jeg har fået hjælp til resten af den her del af opgave, men jeg kan forklare hvad der sker.
+
+*/
+
+SELECT*FROM employees_leaders;
+
+INSERT INTO employees_leaders (employee_number, leader_number)
+SELECT employees.employee_number, leaders.leader_number
+FROM employees, leaders
+WHERE employees.employee_name = 'SMITH' AND leaders.leader_name='Nielsen';
+
+INSERT INTO employees_leaders (employee_number, leader_number)
+SELECT employees.employee_number, leaders.leader_number
+FROM employees, leaders
+WHERE employees.employee_name = 'Allen' AND leaders.leader_name='Hansen';
+
+INSERT INTO employees_leaders (employee_number, leader_number)
+SELECT employees.employee_number, leaders.leader_number
+FROM employees, leaders
+WHERE employees.employee_name = 'WARD' AND leaders.leader_name='Jensen';
+
+
+/*
+ Opgave 4: Create a many-to-many query between employees and leaders.
+ It requires two JOIN statements.
+ First you select from employees,
+ then you join with employees_leaders,
+ and finally you join again with leaders.
+
+
+ For at få meningsfuld data (navnene i stedet for id numre) fra de andre tabeller,
+ kan man lave en inner join til dem begge 2, fra employees_leaders.
+
+ */
+
+SELECT employees.employee_name, leaders.leader_name
+FROM employees
+JOIN employees_leaders
+ON employees.employee_number = employees_leaders.employee_number
+JOIN leaders
+ON employees_leaders.leader_number = leaders.leader_number
+ORDER BY employees.employee_name;
+
+
